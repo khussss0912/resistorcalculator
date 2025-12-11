@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistor Helper — Hitung Nilai Resistor dengan Gelang Warna</title>
+    <meta name="description" content="Kalkulator resistor online yang membantu menghitung nilai resistor berdasarkan kode warna gelang. Antarmuka intuitif, mode terang/gelap, dan dukungan multi-bahasa.">
+    <meta name="keywords" content="resistor calculator, resistor helper, kode warna resistor, hitung resistor, elektronika">
+    <meta name="author" content="Resistor Helper">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================
+           CSS Variables & Theme
+           ======================== */
+        :root {
+            /* Light Theme */
+            --color-bg: #f5f8fb;
+            --color-surface: #ffffff;
+            --color-surface-secondary: #f9fafc;
+            --color-text-primary: #0b1220;
+            --color-text-secondary: #54606f;
+            --color-text-tertiary: #8a94a6;
+            --color-primary: #2563eb;
+            --color-primary-dark: #1d4ed8;
+            --color-accent: #06b6d4;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-border: rgba(11, 18, 32, 0.08);
+            --color-overlay: rgba(11, 18, 32, 0.4);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(18, 24, 36, 0.04);
+            --shadow-md: 0 8px 28px rgba(18, 24, 36, 0.06);
+            --shadow-lg: 0 20px 50px rgba(18, 24, 36, 0.08);
+            --shadow-xl: 0 30px 80px rgba(2, 6, 23, 0.35);
+            
+            /* Border radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 999px;
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
+            --transition-slow: 0.35s cubic-bezier(0.2, 0.9, 0.2, 1);
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color-scheme: light;
+        }
+
+        /* Dark Theme */
+        html.dark {
+            --color-bg: #071226;
+            --color-surface: #0b1726;
+            --color-surface-secondary: #0f1e30;
+            --color-text-primary: #e6eef8;
+            --color-text-secondary: #9fb0c8;
+            --color-text-tertiary: #6c7c94;
+            --color-primary: #3b82f6;
+            --color-primary-dark: #2563eb;
+            --color-accent: #22d3ee;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-overlay: rgba(2, 6, 23, 0.6);
+            
+            --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.4);
+            --shadow-md: 0 8px 28px rgba(2, 6, 23, 0.5);
+            --shadow-lg: 0 20px 50px rgba(2, 6, 23, 0.6);
+            --shadow-xl: 0 30px 80px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ========================
+           Reset & Base Styles
+           ======================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color var(--transition-slow), color var(--transition-slow);
+        }
+
+        /* ========================
+           Animations
+           ======================== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .animate-fade-out {
+            animation: fadeOut 0.2s ease-in forwards;
+        }
+
+        /* ========================
+           Typography
+           ======================== */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: var(--space-md);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        p {
+            margin-bottom: var(--space-md);
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-xs {
+            font-size: 12px;
+        }
+
+        .text-muted {
+            color: var(--color-text-secondary);
+        }
+
+        .text-tertiary {
+            color: var(--color-text-tertiary);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-error {
+            color: var(--color-error);
+        }
+
+        .text-success {
+            color: var(--color-success);
+        }
+
+        /* ========================
+           Layout & Containers
+           ======================== */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: var(--space-lg);
+            padding-top: 100px;
+            opacity: 1;
+            transition: opacity var(--transition-base);
+        }
+
+        .page.fade-out {
+            opacity: 0;
+        }
+
+        .page.fade-in {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .page {
+                padding: var(--space-md);
+                padding-top: 90px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+        }
+
+        /* ========================
+           Enhanced Header Design
+           ======================== */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            transition: background-color var(--transition-slow), border-color var(--transition-slow);
+        }
+
+        html.dark .main-header {
+            background: rgba(11, 23, 38, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-base);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all var(--transition-base);
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin: 0;
+            line-height: 1.3;
+            transition: color var(--transition-base);
+        }
+
+        /* ========================
+           Header Controls
+           ======================== */
+        .header-controls {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: var(--space-xs);
+            align-items: center;
+            padding: var(--space-xs);
+            background: var(--color-surface-secondary);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: transparent;
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: all var(--transition-base);
+        }
+
+        .theme-toggle:hover {
+            color: var(--color-text-primary);
+            background: var(--color-surface);
+            border-color: var(--color-primary);
+            transform: rotate(15deg);
+        }
+
+        .lang-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lang-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--color-primary);
+            border-radius: var(--radius-full);
+            opacity: 0;
+            transform: scale(0);
+            transition: all var(--transition-base);
+        }
+
+        .lang-toggle:hover {
+            color: var(--color-text-primary);
+            background: var(--color-surface);
+        }
+
+        .lang-toggle.active {
+            color: white;
+            background: var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        .lang-toggle.active::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .lang-toggle span {
+            position: relative;
+            z-index: 1;
+            transition: transform var(--transition-base);
+        }
+
+        .lang-toggle.active span {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-header {
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .logo {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+            
+            .logo-text h1 {
+                font-size: 18px;
+            }
+            
+            .logo-text p {
+                font-size: 10px;
+            }
+            
+            .theme-toggle,
+            .lang-toggle {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        /* ========================
+           WhatsApp FAB
+           ======================== */
+        .whatsapp-fab {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: #25D366;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            z-index: 999;
+            transition: all var(--transition-base);
+            text-decoration: none;
+        }
+
+        .whatsapp-fab:hover {
+            transform: translateY(-4px) rotate(5deg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-fab {
+                bottom: var(--space-md);
+                right: var(--space-md);
+            }
+        }
+
+        /* ========================
+           Grid Layout
+           ======================== */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================
+           Cards
+           ======================== */
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+        }
+
+        /* ========================
+           Resistor Preview
+           ======================== */
+        .resistor-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .resistor-container {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--color-border);
+            position: relative;
+            transition: all var(--transition-base);
+        }
+
+        .resistor-label {
+            position: absolute;
+            top: var(--space-sm);
+            left: var(--space-sm);
+            font-size: 12px;
+            color: var(--color-text-tertiary);
+            background: var(--color-surface-secondary);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            transition: all var(--transition-base);
+        }
+
+        .resistor-svg {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        /* ========================
+           Band Slots
+           ======================== */
+        .slots-container {
+            margin: var(--space-lg) 0;
+        }
+
+        .slots-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .slot {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            background: var(--color-surface-secondary);
+            border: 2px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            padding-top: 8px;
+        }
+
+        .slot:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        .slot.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .slot-color {
+            width: 70%;
+            height: 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-xs);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .dark .slot-color {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .slot-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-align: center;
+            padding: 0 4px;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: all var(--transition-base);
+        }
+
+        .slot-index {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--color-surface);
+            color: var(--color-text-tertiary);
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+        }
+
+        /* Improved mobile styles for slot labels - FIX for Abu-abu text */
+        @media (max-width: 480px) {
+            .slots-grid {
+                gap: var(--space-xs);
+            }
+            
+            .slot {
+                padding: var(--space-xs);
+                aspect-ratio: 3/4;
+                padding-top: 10px;
+            }
+            
+            .slot-label {
+                font-size: 11px;
+                padding: 0 2px;
+                white-space: normal;
+                word-break: break-word;
+                line-height: 1.2;
+                max-height: 28px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            
+            .slot-color {
+                width: 80%;
+                height: 16px;
+                margin-bottom: 4px;
+            }
+            
+            .slot-index {
+                font-size: 9px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        /* ========================
+           Color Swatches
+           ======================== */
+        .swatches-container {
+            margin-top: var(--space-lg);
+        }
+
+        .swatches-header {
+            margin-bottom: var(--space-sm);
+        }
+
+        .swatches-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--space-sm);
+        }
+
+        @media (max-width: 768px) {
+            .swatches-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .swatch {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--color-border);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition-base);
+            overflow: hidden;
+        }
+
+        .swatch:hover {
+            transform: scale(1.05);
+            border-color: var(--color-primary);
+        }
+
+        .swatch-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 10px;
+            text-align: center;
+            padding: 2px;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            backdrop-filter: blur(4px);
+        }
+
+        .swatch:hover .swatch-label {
+            opacity: 1;
+        }
+
+        .swatch.empty {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--color-border),
+                var(--color-border) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+            background-color: var(--color-surface);
+        }
+
+        .swatch.empty .swatch-label {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            .swatch-label {
+                font-size: 9px;
+                padding: 3px 1px;
+            }
+        }
+
+        /* ========================
+           Controls
+           ======================== */
+        .controls {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--color-surface-secondary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: var(--radius-full);
+        }
+
+        /* Guide button with larger icon */
+        #guideBtn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ========================
+           Results Section
+           ======================== */
+        #result-section {
+            scroll-margin-top: 120px;
+        }
+
+        .result-card {
+            position: sticky;
+            top: 120px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .result-value {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all var(--transition-base);
+        }
+
+        .result-range {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-lg);
+            transition: color var(--transition-base);
+        }
+
+        .result-details {
+            margin-top: var(--space-lg);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px dashed var(--color-border);
+            transition: border-color var(--transition-base);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            transition: color var(--transition-base);
+        }
+
+        .detail-value {
+            font-weight: 500;
+            font-size: 14px;
+            transition: color var(--transition-base);
+        }
+
+        /* ========================
+           Modal
+           ======================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--color-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-base), visibility var(--transition-base);
+            padding: var(--space-md);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--color-surface-secondary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+            transition: all var(--transition-base);
+        }
+
+        .modal-close:hover {
+            background: var(--color-border);
+            color: var(--color-text-primary);
+            transform: rotate(90deg);
+        }
+
+        .color-guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-lg);
+        }
+
+        .color-guide-table th,
+        .color-guide-table td {
+            padding: var(--space-sm);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+        }
+
+        .color-guide-table th {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            background: var(--color-surface-secondary);
+        }
+
+        .color-guide-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .color-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .color-sample {
+            width: 40px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+        }
+
+        /* ========================
+           Footer
+           ======================== */
+        footer {
+            text-align: center;
+            padding: var(--space-lg) 0;
+            color: var(--color-text-tertiary);
+            font-size: 14px;
+            border-top: 1px solid var(--color-border);
+            margin-top: var(--space-xl);
+            transition: all var(--transition-base);
+        }
+
+        .footer-note {
+            font-size: 12px;
+            margin-top: var(--space-xs);
+            color: var(--color-text-tertiary);
+        }
+
+        /* ========================
+           Utility Classes
+           ======================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+
+        /* ========================
+           Loading Animation
+           ======================== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">RH</div>
+                <div class="logo-text">
+                    <h1 id="pageTitle">Resistor Helper</h1>
+                    <p id="pageSubtitle">Kalkulator Resistor Online</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-controls">
+            <div class="control-group">
+                <button class="lang-toggle active" id="langId" aria-label="Bahasa Indonesia" title="Bahasa Indonesia">
+                    <span>ID</span>
+                </button>
+                <button class="lang-toggle" id="langEn" aria-label="English" title="English">
+                    <span>EN</span>
+                </button>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Mode Gelap/Terang">
+                <span id="themeIcon">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- WhatsApp FAB -->
+    <a href="https://wa.me/6285645742698?text=Halo%20Resistor%20Helper%2C%20saya%20ingin%20bertanya%20tentang..." 
+       class="whatsapp-fab" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Hubungi via WhatsApp">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.032 2c-5.509 0-9.974 4.465-9.974 9.974 0 1.761.46 3.479 1.333 4.992L2 22l5.233-1.237a9.928 9.928 0 0 0 4.798 1.23c5.509 0 9.974-4.465 9.974-9.974S17.541 2 12.032 2zm5.698 13.908c-.248.701-1.389 1.28-1.953 1.362-.532.076-1.202.109-1.867-.117-.553-.188-1.246-.434-2.158-.927-3.217-1.714-5.316-5.087-5.481-5.323-.165-.236-1.329-1.765-1.329-3.367 0-1.602.827-2.386 1.111-2.692.284-.306.618-.382.825-.382.207 0 .413.019.59.035.177.016.415-.059.648.443.233.502.794 1.735.864 1.861.07.126.141.297.042.472-.099.175-.149.296-.297.472-.148.176-.309.387-.443.531-.148.159-.301.33-.129.628.173.298.766 1.275 1.645 2.065 1.125 1.001 2.08 1.316 2.38 1.455.299.139.473.117.648-.07.175-.188.749-.877.95-1.176.201-.299.413-.253.688-.151.275.102 1.735.817 2.034.965.299.148.497.222.568.342.071.12.071.698-.177 1.399z"/>
+        </svg>
+    </a>
+
+    <!-- Main Content -->
+    <main class="page">
+        <!-- Resistor Preview -->
+        <section class="resistor-preview">
+            <div class="resistor-container">
+                <div class="resistor-label">Resistor Preview</div>
+                <svg class="resistor-svg" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left lead -->
+                    <rect x="0" y="45" width="40" height="10" rx="5" fill="#c0c8d0"/>
+                    
+                    <!-- Resistor body -->
+                    <rect x="40" y="20" width="320" height="60" rx="12" fill="#e8edf5"/>
+                    
+                    <!-- Bands -->
+                    <rect id="band1" x="80" y="20" width="16" height="60" rx="3" fill="#7a4b11"/>
+                    <rect id="band2" x="120" y="20" width="16" height="60" rx="3" fill="#000000"/>
+                    <rect id="band3" x="160" y="20" width="16" height="60" rx="3" fill="#000000"/>
+                    <rect id="band4" x="200" y="20" width="16" height="60" rx="3" fill="#ff7a18"/>
+                    <rect id="band5" x="240" y="20" width="16" height="60" rx="3" fill="#d9b12f"/>
+                    
+                    <!-- Right lead -->
+                    <rect x="360" y="45" width="40" height="10" rx="5" fill="#c0c8d0"/>
+                </svg>
+            </div>
+        </section>
+
+        <div class="grid">
+            <!-- Left Column: Input Section -->
+            <section class="card">
+                <div class="slots-header">
+                    <h2 id="inputTitle">Atur Warna Gelang</h2>
+                    <button id="guideBtn" class="btn btn-secondary btn-icon" aria-label="Buka panduan warna">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-muted" id="inputDescription">
+                    Klik pada setiap gelang (1-5) kemudian pilih warna dari palet di bawah. Gunakan "Kosong" jika gelang tidak ada.
+                </p>
+
+                <!-- Band Slots -->
+                <div class="slots-container">
+                    <div class="slots-grid" id="slotsContainer">
+                        <!-- Slots will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Color Swatches -->
+                <div class="swatches-container">
+                    <h3 class="swatches-header" id="colorPaletteTitle">Palet Warna</h3>
+                    <div class="swatches-grid" id="swatchesContainer">
+                        <!-- Swatches will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button id="resetBtn" class="btn btn-secondary">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                        </svg>
+                        <span id="resetText">Reset</span>
+                    </button>
+                    <button id="calculateBtn" class="btn btn-primary">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        <span id="calculateText">Hitung Nilai</span>
+                    </button>
+                </div>
+
+                <p class="text-tertiary text-sm" id="calculationNote">
+                    * Minimal dibutuhkan 2 digit dan 1 multiplier untuk perhitungan.
+                </p>
+            </section>
+
+            <!-- Right Column: Results Section -->
+            <aside id="result-section" class="card result-card">
+                <div class="result-header">
+                    <div>
+                        <h2 id="resultTitle">Hasil Perhitungan</h2>
+                        <div id="resultValue" class="result-value">—</div>
+                        <div id="resultRange" class="result-range"></div>
+                    </div>
+                    <div id="bandPreview">
+                        <!-- Band preview will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="result-details" id="resultDetails">
+                    <!-- Details will be populated by JavaScript -->
+                    <p class="text-muted text-center" id="noResultText">
+                        Hasil akan ditampilkan di sini setelah perhitungan.
+                    </p>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p class="text-tertiary">© 2025 Resistor Helper</p>
+            <p class="footer-note" id="footerNote">
+                Website penghitung nilai resistor berdasarkan warna.
+            </p>
+        </footer>
+    </main>
+
+    <!-- Color Guide Modal -->
+    <div class="modal-overlay" id="colorGuideModal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Panduan Kode Warna Resistor</h2>
+                <button class="modal-close" id="closeModal" aria-label="Tutup panduan">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="text-muted" id="modalDescription">
+                Tabel berikut menunjukkan nilai digit, multiplier, dan toleransi untuk setiap warna resistor.
+            </p>
+
+            <table class="color-guide-table">
+                <thead>
+                    <tr>
+                        <th id="colColor">Warna</th>
+                        <th id="colDigit">Digit</th>
+                        <th id="colMultiplier">Multiplier</th>
+                        <th id="colTolerance">Toleransi</th>
+                    </tr>
+                </thead>
+                <tbody id="colorGuideBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+
+            <p class="text-tertiary text-sm" id="modalNote" style="margin-top: var(--space-lg);">
+                * Warna emas dan perak biasanya digunakan sebagai multiplier (×0.1, ×0.01) atau toleransi (5%, 10%).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ========================
+        // Constants & Configuration
+        // ========================
+        const COLOR_DATA = [
+            { id: 'none', label_en: 'Empty', label_id: 'Kosong', hex: 'transparent', digit: null, multiplier: null, tolerance: null },
+            { id: 'black', label_en: 'Black', label_id: 'Hitam', hex: '#000000', digit: 0, multiplier: 1, tolerance: null },
+            { id: 'brown', label_en: 'Brown', label_id: 'Cokelat', hex: '#7a4b11', digit: 1, multiplier: 10, tolerance: 1 },
+            { id: 'red', label_en: 'Red', label_id: 'Merah', hex: '#c21c1c', digit: 2, multiplier: 100, tolerance: 2 },
+            { id: 'orange', label_en: 'Orange', label_id: 'Oranye', hex: '#ff7a18', digit: 3, multiplier: 1000, tolerance: null },
+            { id: 'yellow', label_en: 'Yellow', label_id: 'Kuning', hex: '#f7d21a', digit: 4, multiplier: 10000, tolerance: null },
+            { id: 'green', label_en: 'Green', label_id: 'Hijau', hex: '#088a3f', digit: 5, multiplier: 100000, tolerance: 0.5 },
+            { id: 'blue', label_en: 'Blue', label_id: 'Biru', hex: '#155fcc', digit: 6, multiplier: 1000000, tolerance: 0.25 },
+            { id: 'violet', label_en: 'Violet', label_id: 'Ungu', hex: '#6b2aa8', digit: 7, multiplier: 10000000, tolerance: 0.1 },
+            { id: 'grey', label_en: 'Grey', label_id: 'Abu-abu', hex: '#7d7d7d', digit: 8, multiplier: 100000000, tolerance: 0.05 },
+            { id: 'white', label_en: 'White', label_id: 'Putih', hex: '#ffffff', digit: 9, multiplier: 1000000000, tolerance: null },
+            { id: 'gold', label_en: 'Gold', label_id: 'Emas', hex: '#d9b12f', digit: null, multiplier: 0.1, tolerance: 5 },
+            { id: 'silver', label_en: 'Silver', label_id: 'Perak', hex: '#c1c1c1', digit: null, multiplier: 0.01, tolerance: 10 }
+        ];
+
+        const TRANSLATIONS = {
+            id: {
+                title: 'Resistor Helper',
+                subtitle: 'Kalkulator Resistor Online',
+                inputTitle: 'Atur Warna Gelang',
+                inputDescription: 'Klik pada setiap gelang (1-5) kemudian pilih warna dari palet di bawah. Gunakan "Kosong" jika gelang tidak ada.',
+                colorPaletteTitle: 'Palet Warna',
+                reset: 'Reset',
+                calculate: 'Hitung Nilai',
+                calculationNote: '* Minimal dibutuhkan 2 digit dan 1 multiplier untuk perhitungan.',
+                resultTitle: 'Hasil Perhitungan',
+                noResultText: 'Hasil akan ditampilkan di sini setelah perhitungan.',
+                footerNote: 'Website penghitung nilai resistor berdasarkan warna.',
+                modalTitle: 'Panduan Kode Warna Resistor',
+                modalDescription: 'Tabel berikut menunjukkan nilai digit, multiplier, dan toleransi untuk setiap warna resistor.',
+                modalNote: '* Warna emas dan perak biasanya digunakan sebagai multiplier (×0.1, ×0.01) atau toleransi (5%, 10%).',
+                colColor: 'Warna',
+                colDigit: 'Digit',
+                colMultiplier: 'Multiplier',
+                colTolerance: 'Toleransi',
+                errorMinimal: 'Minimal dibutuhkan 2 digit dan 1 multiplier untuk perhitungan.',
+                errorNoMultiplier: 'Tidak ditemukan warna multiplier. Silakan pilih warna multiplier.',
+                errorNoDigits: 'Tidak ditemukan cukup digit. Minimal dibutuhkan 2 digit sebelum multiplier.',
+                errorInvalidTolerance: 'Warna yang dipilih untuk toleransi tidak valid. Gunakan coklat, merah, hijau, biru, ungu, abu-abu, emas, atau perak.',
+                band: 'Gelang',
+                digit: 'Digit',
+                multiplier: 'Multiplier',
+                tolerance: 'Toleransi',
+                calculation: 'Perhitungan',
+                value: 'Nilai',
+                range: 'Rentang',
+                ohms: 'Ω',
+                kohms: 'kΩ',
+                mohms: 'MΩ'
+            },
+            en: {
+                title: 'Resistor Helper',
+                subtitle: 'Online Resistor Calculator',
+                inputTitle: 'Set Band Colors',
+                inputDescription: 'Click on each band (1-5) then select a color from the palette below. Use "Empty" if the band is not present.',
+                colorPaletteTitle: 'Color Palette',
+                reset: 'Reset',
+                calculate: 'Calculate Value',
+                calculationNote: '* Minimum 2 digits and 1 multiplier required for calculation.',
+                resultTitle: 'Calculation Result',
+                noResultText: 'Result will be displayed here after calculation.',
+                footerNote: 'Website for calculating resistor values based on color codes.',
+                modalTitle: 'Resistor Color Code Guide',
+                modalDescription: 'The table below shows digit value, multiplier, and tolerance for each resistor color.',
+                modalNote: '* Gold and silver are typically used as multiplier (×0.1, ×0.01) or tolerance (5%, 10%).',
+                colColor: 'Color',
+                colDigit: 'Digit',
+                colMultiplier: 'Multiplier',
+                colTolerance: 'Tolerance',
+                errorMinimal: 'Minimum 2 digits and 1 multiplier required for calculation.',
+                errorNoMultiplier: 'No multiplier color found. Please select a multiplier color.',
+                errorNoDigits: 'Not enough digits found. Minimum 2 digits required before multiplier.',
+                errorInvalidTolerance: 'Invalid tolerance color selected. Use brown, red, green, blue, violet, grey, gold, or silver.',
+                band: 'Band',
+                digit: 'Digit',
+                multiplier: 'Multiplier',
+                tolerance: 'Tolerance',
+                calculation: 'Calculation',
+                value: 'Value',
+                range: 'Range',
+                ohms: 'Ω',
+                kohms: 'kΩ',
+                mohms: 'MΩ'
+            }
+        };
+
+        // ========================
+        // State Management
+        // ========================
+        let state = {
+            bands: ['brown', 'black', 'black', 'red', 'gold'],
+            activeBand: 0,
+            language: localStorage.getItem('rh_language') || 'id',
+            theme: localStorage.getItem('rh_theme') || 'light',
+            lastCalculation: null
+        };
+
+        // ========================
+        // DOM Elements
+        // ========================
+        const elements = {
+            // Language & Theme
+            langId: document.getElementById('langId'),
+            langEn: document.getElementById('langEn'),
+            themeToggle: document.getElementById('themeToggle'),
+            themeIcon: document.getElementById('themeIcon'),
+            
+            // Page Content
+            pageTitle: document.getElementById('pageTitle'),
+            pageSubtitle: document.getElementById('pageSubtitle'),
+            inputTitle: document.getElementById('inputTitle'),
+            inputDescription: document.getElementById('inputDescription'),
+            colorPaletteTitle: document.getElementById('colorPaletteTitle'),
+            resetText: document.getElementById('resetText'),
+            calculateText: document.getElementById('calculateText'),
+            calculationNote: document.getElementById('calculationNote'),
+            resultTitle: document.getElementById('resultTitle'),
+            noResultText: document.getElementById('noResultText'),
+            footerNote: document.getElementById('footerNote'),
+            
+            // Modal
+            modalTitle: document.getElementById('modalTitle'),
+            modalDescription: document.getElementById('modalDescription'),
+            modalNote: document.getElementById('modalNote'),
+            colorGuideBody: document.getElementById('colorGuideBody'),
+            colColor: document.getElementById('colColor'),
+            colDigit: document.getElementById('colDigit'),
+            colMultiplier: document.getElementById('colMultiplier'),
+            colTolerance: document.getElementById('colTolerance'),
+            
+            // Interactive Elements
+            slotsContainer: document.getElementById('slotsContainer'),
+            swatchesContainer: document.getElementById('swatchesContainer'),
+            bandPreview: document.getElementById('bandPreview'),
+            resultValue: document.getElementById('resultValue'),
+            resultRange: document.getElementById('resultRange'),
+            resultDetails: document.getElementById('resultDetails'),
+            resultSection: document.getElementById('result-section'),
+            
+            // Buttons
+            resetBtn: document.getElementById('resetBtn'),
+            calculateBtn: document.getElementById('calculateBtn'),
+            guideBtn: document.getElementById('guideBtn'),
+            closeModal: document.getElementById('closeModal'),
+            
+            // Modal
+            colorGuideModal: document.getElementById('colorGuideModal'),
+            
+            // SVG Bands
+            band1: document.getElementById('band1'),
+            band2: document.getElementById('band2'),
+            band3: document.getElementById('band3'),
+            band4: document.getElementById('band4'),
+            band5: document.getElementById('band5'),
+            
+            // Page container
+            page: document.querySelector('.page')
+        };
+
+        // ========================
+        // Utility Functions
+        // ========================
+        function t(key) {
+            return TRANSLATIONS[state.language][key] || key;
+        }
+
+        function formatResistance(value) {
+            if (value === null || isNaN(value)) return '—';
+            
+            if (value >= 1000000) {
+                return (value / 1000000).toFixed(2).replace(/\.00$/, '') + ' ' + t('mohms');
+            } else if (value >= 1000) {
+                return (value / 1000).toFixed(2).replace(/\.00$/, '') + ' ' + t('kohms');
+            } else {
+                return value.toFixed(2).replace(/\.00$/, '') + ' ' + t('ohms');
+            }
+        }
+
+        // ========================
+        // Band Management
+        // ========================
+        function updateResistorBands() {
+            const bands = [elements.band1, elements.band2, elements.band3, elements.band4, elements.band5];
+            
+            bands.forEach((band, index) => {
+                const colorId = state.bands[index];
+                const colorData = COLOR_DATA.find(c => c.id === colorId);
+                
+                if (colorData && colorData.hex !== 'transparent') {
+                    band.setAttribute('fill', colorData.hex);
+                    band.style.display = 'block';
+                    
+                    // Add border for white band for visibility
+                    if (colorData.id === 'white') {
+                        band.style.stroke = '#cccccc';
+                        band.style.strokeWidth = '1';
+                    } else {
+                        band.style.stroke = 'none';
+                    }
+                } else {
+                    // Hide band if it's empty (transparent)
+                    band.style.display = 'none';
+                }
+            });
+        }
+
+        function renderBandSlots() {
+            elements.slotsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const colorId = state.bands[i];
+                const colorData = COLOR_DATA.find(c => c.id === colorId);
+                const isActive = i === state.activeBand;
+                
+                const slot = document.createElement('div');
+                slot.className = `slot ${isActive ? 'active' : ''}`;
+                slot.dataset.index = i;
+                slot.setAttribute('role', 'button');
+                slot.setAttribute('tabindex', '0');
+                slot.setAttribute('aria-label', `${t('band')} ${i + 1}: ${colorData ? colorData[`label_${state.language}`] : t('empty')}`);
+                
+                slot.innerHTML = `
+                    <div class="slot-color" style="background-color: ${colorData?.hex || 'transparent'}; ${colorData?.id === 'none' ? 'border: 2px dashed var(--color-border);' : colorData?.id === 'white' ? 'border: 1px solid var(--color-border);' : ''}"></div>
+                    <div class="slot-label">${colorData ? colorData[`label_${state.language}`] : t('empty')}</div>
+                    <div class="slot-index">${i + 1}</div>
+                `;
+                
+                slot.addEventListener('click', () => {
+                    state.activeBand = i;
+                    renderBandSlots();
+                });
+                
+                slot.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        state.activeBand = i;
+                        renderBandSlots();
+                    }
+                });
+                
+                elements.slotsContainer.appendChild(slot);
+            }
+            
+            updateResistorBands();
+        }
+
+        function renderColorSwatches() {
+            elements.swatchesContainer.innerHTML = '';
+            
+            COLOR_DATA.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = `swatch ${color.id === 'none' ? 'empty' : ''}`;
+                swatch.dataset.color = color.id;
+                swatch.style.backgroundColor = color.hex !== 'transparent' ? color.hex : '';
+                swatch.style.border = color.id === 'white' ? '1px solid var(--color-border)' : '';
+                swatch.setAttribute('role', 'button');
+                swatch.setAttribute('tabindex', '0');
+                swatch.setAttribute('aria-label', color[`label_${state.language}`]);
+                
+                swatch.innerHTML = `
+                    <div class="swatch-label">${color[`label_${state.language}`]}</div>
+                `;
+                
+                swatch.addEventListener('click', () => {
+                    state.bands[state.activeBand] = color.id;
+                    renderBandSlots();
+                    renderBandPreview();
+                });
+                
+                swatch.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        state.bands[state.activeBand] = color.id;
+                        renderBandSlots();
+                        renderBandPreview();
+                    }
+                });
+                
+                elements.swatchesContainer.appendChild(swatch);
+            });
+        }
+
+        function renderBandPreview() {
+            elements.bandPreview.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const colorId = state.bands[i];
+                const colorData = COLOR_DATA.find(c => c.id === colorId);
+                
+                if (colorData && colorData.id !== 'none') {
+                    const preview = document.createElement('div');
+                    preview.className = 'slot-color';
+                    preview.style.width = '24px';
+                    preview.style.height = '32px';
+                    preview.style.backgroundColor = colorData.hex;
+                    preview.style.margin = '0 2px';
+                    preview.style.borderRadius = '4px';
+                    preview.style.border = colorData.id === 'white' ? '1px solid var(--color-border)' : 'none';
+                    preview.setAttribute('title', colorData[`label_${state.language}`]);
+                    preview.setAttribute('aria-label', `${t('band')} ${i + 1}: ${colorData[`label_${state.language}`]}`);
+                    
+                    elements.bandPreview.appendChild(preview);
+                }
+            }
+        }
+
+        // ========================
+        // Enhanced Calculation Logic
+        // ========================
+        function calculateResistance() {
+            // Create a copy of bands and filter out empty ones
+            const validBands = state.bands.map((band, index) => ({
+                color: band,
+                index: index,
+                data: COLOR_DATA.find(c => c.id === band)
+            })).filter(band => band.color !== 'none');
+            
+            // Check minimum requirements
+            if (validBands.length < 3) {
+                alert(t('errorMinimal'));
+                return null;
+            }
+            
+            // Determine if we have 4 or 5 bands (based on position of empty)
+            const hasFiveBands = state.bands[4] !== 'none';
+            const effectiveBands = hasFiveBands ? 5 : 4;
+            
+            // Find digits, multiplier, and tolerance based on configuration
+            let digits = [];
+            let multiplier = null;
+            let tolerance = null;
+            let toleranceIndex = -1;
+            let multiplierIndex = -1;
+            
+            // First, try to find tolerance
+            // Tolerance can be in position 4 (for 4-band) or 5 (for 5-band)
+            const tolerancePositions = hasFiveBands ? [4] : [3];
+            
+            for (const pos of tolerancePositions) {
+                const band = state.bands[pos];
+                const data = COLOR_DATA.find(c => c.id === band);
+                if (data && data.tolerance !== null && band !== 'none') {
+                    tolerance = data.tolerance;
+                    toleranceIndex = pos;
+                    break;
+                }
+            }
+            
+            // If no tolerance found in expected positions, check if last band has tolerance
+            if (tolerance === null) {
+                const lastBand = validBands[validBands.length - 1];
+                if (lastBand.data.tolerance !== null) {
+                    tolerance = lastBand.data.tolerance;
+                    toleranceIndex = lastBand.index;
+                }
+            }
+            
+            // Find multiplier
+            // Multiplier can be in position 3 (for 4-band) or 4 (for 5-band)
+            // But if position 4 is empty and position 5 has tolerance, then multiplier is in position 3
+            const multiplierPositions = hasFiveBands ? [3, 2] : [2, 1];
+            
+            for (const pos of multiplierPositions) {
+                const band = state.bands[pos];
+                const data = COLOR_DATA.find(c => c.id === band);
+                if (data && data.multiplier !== null && band !== 'none') {
+                    // Check if this position is already used for something else
+                    if (pos !== toleranceIndex) {
+                        multiplier = data.multiplier;
+                        multiplierIndex = pos;
+                        break;
+                    }
+                }
+            }
+            
+            // If still no multiplier found, try any position before tolerance
+            if (multiplier === null) {
+                for (let i = 0; i < validBands.length; i++) {
+                    const band = validBands[i];
+                    if (band.data.multiplier !== null && band.index !== toleranceIndex) {
+                        // Make sure it's not a digit position
+                        if (band.index < (toleranceIndex !== -1 ? toleranceIndex : effectiveBands)) {
+                            multiplier = band.data.multiplier;
+                            multiplierIndex = band.index;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (multiplier === null) {
+                alert(t('errorNoMultiplier'));
+                return null;
+            }
+            
+            // Get digits (positions before multiplier)
+            for (let i = 0; i < multiplierIndex; i++) {
+                const band = state.bands[i];
+                const data = COLOR_DATA.find(c => c.id === band);
+                if (data && data.digit !== null && band !== 'none') {
+                    digits.push(data.digit);
+                }
+            }
+            
+            // If not enough digits, try to get more from after multiplier but before tolerance
+            if (digits.length < 2) {
+                for (let i = multiplierIndex + 1; i < (toleranceIndex !== -1 ? toleranceIndex : effectiveBands); i++) {
+                    const band = state.bands[i];
+                    const data = COLOR_DATA.find(c => c.id === band);
+                    if (data && data.digit !== null && band !== 'none') {
+                        digits.push(data.digit);
+                    }
+                }
+            }
+            
+            if (digits.length < 2) {
+                alert(t('errorNoDigits'));
+                return null;
+            }
+            
+            // Validate tolerance if one was selected
+            if (toleranceIndex !== -1) {
+                const toleranceData = COLOR_DATA.find(c => c.id === state.bands[toleranceIndex]);
+                if (!toleranceData || toleranceData.tolerance === null) {
+                    alert(t('errorInvalidTolerance'));
+                    // Use default tolerance of 20% if invalid
+                    tolerance = 20;
+                }
+            } else {
+                // Default tolerance if none specified
+                tolerance = 20;
+            }
+            
+            // Calculate resistance
+            let digitValue = 0;
+            for (let i = 0; i < digits.length; i++) {
+                digitValue = digitValue * 10 + digits[i];
+            }
+            
+            const resistance = digitValue * multiplier;
+            
+            // Calculate range
+            const toleranceDecimal = tolerance / 100;
+            const min = resistance * (1 - toleranceDecimal);
+            const max = resistance * (1 + toleranceDecimal);
+            
+            return {
+                resistance,
+                tolerance,
+                min,
+                max,
+                digits,
+                multiplier,
+                digitValue,
+                hasTolerance: toleranceIndex !== -1,
+                bandCount: effectiveBands
+            };
+        }
+
+        function displayResults(result) {
+            if (!result) {
+                elements.resultValue.textContent = '—';
+                elements.resultRange.textContent = '';
+                elements.resultDetails.innerHTML = `
+                    <p class="text-muted text-center">${t('noResultText')}</p>
+                `;
+                return;
+            }
+            
+            // Update main result
+            elements.resultValue.textContent = formatResistance(result.resistance);
+            elements.resultRange.textContent = `${t('range')}: ${formatResistance(result.min)} - ${formatResistance(result.max)} (±${result.tolerance}%)`;
+            
+            // Update details
+            elements.resultDetails.innerHTML = '';
+            
+            const detailRows = [
+                { label: t('band'), value: `${result.bandCount} ${result.bandCount === 4 ? 'Gelang' : 'Gelang'}` },
+                { label: t('digit'), value: result.digits.join('') },
+                { label: t('multiplier'), value: `×${result.multiplier}` },
+                { label: t('calculation'), value: `${result.digitValue} × ${result.multiplier}` },
+                { label: t('tolerance'), value: `±${result.tolerance}%` }
+            ];
+            
+            detailRows.forEach((row, index) => {
+                const el = document.createElement('div');
+                el.className = 'detail-row';
+                el.innerHTML = `
+                    <span class="detail-label">${row.label}</span>
+                    <span class="detail-value">${row.value}</span>
+                `;
+                elements.resultDetails.appendChild(el);
+            });
+            
+            state.lastCalculation = result;
+        }
+
+        // ========================
+        // Modal Management
+        // ========================
+        function renderColorGuide() {
+            elements.colorGuideBody.innerHTML = '';
+            
+            COLOR_DATA.forEach((color, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="color-cell">
+                            <div class="color-sample" style="background-color: ${color.hex}; ${color.id === 'none' ? 'border: 2px dashed var(--color-border);' : color.id === 'white' ? 'border: 1px solid var(--color-border);' : ''}"></div>
+                            <span>${color[`label_${state.language}`]}</span>
+                        </div>
+                    </td>
+                    <td>${color.digit !== null ? color.digit : '—'}</td>
+                    <td>${color.multiplier !== null ? `×${color.multiplier}` : '—'}</td>
+                    <td>${color.tolerance !== null ? `±${color.tolerance}%` : '—'}</td>
+                `;
+                
+                elements.colorGuideBody.appendChild(row);
+            });
+        }
+
+        function openModal() {
+            elements.colorGuideModal.classList.add('active');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeModal() {
+            elements.colorGuideModal.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+
+        // ========================
+        // Language & Theme with Animations
+        // ========================
+        async function updateLanguage() {
+            // Add fade out animation
+            elements.page.classList.add('fade-out');
+            
+            // Wait for animation to complete
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            // Update language buttons
+            elements.langId.classList.toggle('active', state.language === 'id');
+            elements.langEn.classList.toggle('active', state.language === 'en');
+            
+            // Update all translatable text
+            elements.pageTitle.textContent = t('title');
+            elements.pageSubtitle.textContent = t('subtitle');
+            elements.inputTitle.textContent = t('inputTitle');
+            elements.inputDescription.textContent = t('inputDescription');
+            elements.colorPaletteTitle.textContent = t('colorPaletteTitle');
+            elements.resetText.textContent = t('reset');
+            elements.calculateText.textContent = t('calculate');
+            elements.calculationNote.textContent = t('calculationNote');
+            elements.resultTitle.textContent = t('resultTitle');
+            elements.noResultText.textContent = t('noResultText');
+            elements.footerNote.textContent = t('footerNote');
+            elements.modalTitle.textContent = t('modalTitle');
+            elements.modalDescription.textContent = t('modalDescription');
+            elements.modalNote.textContent = t('modalNote');
+            elements.colColor.textContent = t('colColor');
+            elements.colDigit.textContent = t('colDigit');
+            elements.colMultiplier.textContent = t('colMultiplier');
+            elements.colTolerance.textContent = t('colTolerance');
+            
+            // Re-render components WITHOUT auto-scroll
+            renderBandSlots();
+            renderColorSwatches();
+            renderColorGuide();
+            renderBandPreview();
+            
+            // Update results if there was a previous calculation (NO SCROLL)
+            if (state.lastCalculation) {
+                displayResults(state.lastCalculation);
+            }
+            
+            // Remove fade out and add fade in
+            elements.page.classList.remove('fade-out');
+            elements.page.classList.add('fade-in');
+            
+            // Remove fade in class after animation
+            setTimeout(() => {
+                elements.page.classList.remove('fade-in');
+            }, 300);
+        }
+
+        function updateTheme() {
+            // Add smooth transition
+            document.body.style.transition = 'background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (state.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                elements.themeIcon.textContent = '☀️';
+                // Add rotation animation
+                elements.themeToggle.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    elements.themeToggle.style.transform = '';
+                }, 400);
+            } else {
+                document.documentElement.classList.remove('dark');
+                elements.themeIcon.textContent = '🌙';
+                // Add rotation animation
+                elements.themeToggle.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    elements.themeToggle.style.transform = '';
+                }, 400);
+            }
+            
+            localStorage.setItem('rh_theme', state.theme);
+            
+            // Remove transition after animation
+            setTimeout(() => {
+                document.body.style.transition = '';
+            }, 400);
+        }
+
+        // ========================
+        // Event Listeners
+        // ========================
+        function setupEventListeners() {
+            // Language Toggle with animation
+            elements.langId.addEventListener('click', async () => {
+                if (state.language === 'id') return;
+                
+                // Add click animation
+                elements.langId.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    elements.langId.style.transform = '';
+                }, 150);
+                
+                state.language = 'id';
+                localStorage.setItem('rh_language', state.language);
+                await updateLanguage();
+            });
+            
+            elements.langEn.addEventListener('click', async () => {
+                if (state.language === 'en') return;
+                
+                // Add click animation
+                elements.langEn.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    elements.langEn.style.transform = '';
+                }, 150);
+                
+                state.language = 'en';
+                localStorage.setItem('rh_language', state.language);
+                await updateLanguage();
+            });
+            
+            // Theme Toggle with animation
+            elements.themeToggle.addEventListener('click', () => {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                updateTheme();
+            });
+            
+            // Reset Button
+            elements.resetBtn.addEventListener('click', () => {
+                // Add click animation
+                elements.resetBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    elements.resetBtn.style.transform = '';
+                }, 150);
+                
+                state.bands = ['brown', 'black', 'black', 'red', 'gold'];
+                state.activeBand = 0;
+                state.lastCalculation = null;
+                renderBandSlots();
+                renderBandPreview();
+                displayResults(null);
+            });
+            
+            // Calculate Button
+            elements.calculateBtn.addEventListener('click', () => {
+                // Add click animation
+                elements.calculateBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    elements.calculateBtn.style.transform = '';
+                }, 150);
+                
+                const result = calculateResistance();
+                displayResults(result);
+                
+                // Scroll to results section only when calculate button is clicked
+                if (result) {
+                    setTimeout(() => {
+                        elements.resultSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 100);
+                }
+            });
+            
+            // Modal Controls
+            elements.guideBtn.addEventListener('click', () => {
+                // Add click animation
+                elements.guideBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    elements.guideBtn.style.transform = '';
+                }, 150);
+                openModal();
+            });
+            
+            elements.closeModal.addEventListener('click', closeModal);
+            elements.colorGuideModal.addEventListener('click', (e) => {
+                if (e.target === elements.colorGuideModal) {
+                    closeModal();
+                }
+            });
+            
+            // Keyboard Navigation
+            document.addEventListener('keydown', (e) => {
+                // Arrow keys for band navigation
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    state.activeBand = Math.min(4, state.activeBand + 1);
+                    renderBandSlots();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    state.activeBand = Math.max(0, state.activeBand - 1);
+                    renderBandSlots();
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                } else if (e.key === 'r' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    elements.resetBtn.click();
+                } else if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    elements.calculateBtn.click();
+                }
+            });
+            
+            // Prevent scroll when modal is open
+            document.addEventListener('wheel', (e) => {
+                if (elements.colorGuideModal.classList.contains('active')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Add animation to buttons on hover
+            const buttons = document.querySelectorAll('.btn, .theme-toggle, .lang-toggle');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'translateY(-2px)';
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = '';
+                });
+            });
+        }
+
+        // ========================
+        // Initialize Application
+        // ========================
+        function init() {
+            // Set initial theme and language
+            updateTheme();
+            updateLanguage();
+            
+            // Render initial components
+            renderBandSlots();
+            renderColorSwatches();
+            renderColorGuide();
+            renderBandPreview();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Perform initial calculation
+            const initialResult = calculateResistance();
+            displayResults(initialResult);
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>             
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = '';
+                });
+            });
+        }
+
+        // ========================
+        // Initialize Application
+        // ========================
+        function init() {
+            // Set initial theme and language
+            updateTheme();
+            updateLanguage();
+            
+            // Render initial components
+            renderBandSlots();
+            renderColorSwatches();
+            renderColorGuide();
+            renderBandPreview();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Perform initial calculation
+            const initialResult = calculateResistance();
+            displayResults(initialResult);
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html> application
+        init();
+    </script>
+</body>
+</html>();
+    </script>
+</body>
+</html>
